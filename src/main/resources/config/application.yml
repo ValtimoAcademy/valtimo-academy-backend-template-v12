@@ -14,9 +14,6 @@
 logging:
     file:
         name: /tmp/spring.log
-    level:
-        com.ritense.valtimo.security.jwt.authentication: DEBUG
-        com.ritense.valtimo.security.jwt.authentication.TokenAuthenticationService: DEBUG
 
 spring:
     profiles:
@@ -64,7 +61,7 @@ spring:
     liquibase:
         enabled: false
     jpa:
-        database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
         database: postgresql
         show_sql: false
         open-in-view: false
@@ -111,17 +108,15 @@ mailing:
 valtimo:
     app:
         scheme: http
-        hostname: 8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}
-    jwt:
-        base64encoding: false #auth0 client is not base64 encoded
+        hostname: ${VALTIMO_APP_HOSTNAME}
+    oauth:
         tokenValidityInSeconds: 3600 # Token is valid 1 hour
-        tokenValidityInSecondsForRememberMe: 2592000
-        secret: ${KEYCLOAK_PUBLIC_KEY}
+        public-key: ${VALTIMO_OAUTH_PUBLIC_KEY}
     hardening:
         removeStacktracesFromReturnedExceptions: true
         allowStacktraceOnIps:
             - "*"
-    swagger:
+    openapi:
         enabled: false
         title: Valtimo Implementation API
         description: Valtimo Implementation API documentation
@@ -137,19 +132,17 @@ valtimo:
     plugin:
         encryption-secret: "579156b12b9a457a579156b12b9a457a"
     database: postgres
-    web:
-        cors:
-            corsConfiguration:
-                allowedOrigins:
-                    - ${GITPOD_FRONTEND_URL}
-                allowedMethods:
-                    - "*"
-                allowedHeaders:
-                    - "*"
+    changelog:
+        pbac:
+            clear-tables: true
+    security:
+        whitelist:
+            hosts:
+                - localhost
 
 spring-actuator:
     username: admin
-    password: ${SPRING-ACTUATOR_PASSWORD}
+    password: #env var
 
 audit:
     record:
